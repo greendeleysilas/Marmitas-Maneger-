@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marmitas Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #0D0E0F;
+  --bg2: #161718;
+  --bg3: #1E2022;
+  --border: #2A2C2E;
+  --border2: #333538;
+  --text: #F0EFEC;
+  --text2: #8A8B8D;
+  --text3: #5A5B5D;
+  --green: #22C55E;
+  --green2: #15803D;
+  --green-bg: #052614;
+  --amber: #F59E0B;
+  --amber-bg: #1C1200;
+  --red: #EF4444;
+  --red-bg: #1C0505;
+  --blue: #3B82F6;
+  --blue-bg: #050D1C;
+  --purple: #A78BFA;
+  --purple-bg: #0D0A1C;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px}
+
+/* ────── TELA DE LOGIN ────── */
+#login-screen {
+  position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;
+  background-image: radial-gradient(ellipse at 30% 20%, rgba(34,197,94,0.07) 0%, transparent 60%),
+                    radial-gradient(ellipse at 80% 80%, rgba(59,130,246,0.05) 0%, transparent 50%);
+}
+.login-box{width:100%;max-width:380px;padding:2rem;animation:fadeUp .4s ease}
+.login-logo{text-align:center;margin-bottom:2rem}
+.login-logo .logo-icon{width:56px;height:56px;background:var(--green-bg);border:1px solid var(--green2);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:28px}
+.login-logo h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;letter-spacing:-.5px}
+.login-logo p{font-size:13px;color:var(--text2);margin-top:4px}
+.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.5rem}
+.login-card h2{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;margin-bottom:1.25rem}
+.login-tabs{display:flex;gap:4px;background:var(--bg3);border-radius:8px;padding:3px;margin-bottom:1.25rem}
+.login-tab{flex:1;padding:7px;text-align:center;font-size:12px;font-weight:500;border-radius:6px;cursor:pointer;color:var(--text2);transition:all .15s}
+.login-tab.active{background:var(--bg2);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.lf-group{margin-bottom:.875rem}
+.lf-group label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500;letter-spacing:.3px;text-transform:uppercase}
+.lf-group input{width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border .15s}
+.lf-group input:focus{border-color:var(--green)}
+.btn-login{width:100%;padding:11px;background:var(--green);border:none;border-radius:8px;color:#000;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;margin-top:.25rem}
+.btn-login:hover{background:#16a34a}
+.login-error{font-size:12px;color:var(--red);margin-top:.5rem;text-align:center;min-height:18px}
+
+/* ────── LAYOUT PRINCIPAL ────── */
+#app{display:none;height:100vh;overflow:hidden;flex-direction:column}
+#app.visible{display:flex}
+
+/* ────── HEADER ────── */
+.header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.25rem;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
+.header-left{display:flex;align-items:center;gap:.75rem}
+.header-logo{width:32px;height:32px;background:var(--green-bg);border:1px solid var(--green2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.header-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.3px}
+.header-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.header-right{display:flex;align-items:center;gap:.5rem}
+.hbtn{padding:7px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;transition:all .15s}
+.hbtn:hover{border-color:var(--border2);color:var(--text)}
+.hbtn.danger:hover{border-color:var(--red);color:var(--red)}
+.user-badge{font-size:11px;color:var(--text2);background:var(--bg3);border:1px solid var(--border);padding:5px 10px;border-radius:20px}
+
+/* ────── TABS ────── */
+.tabs-bar{display:flex;gap:2px;padding:.5rem 1.25rem;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
+.tabs-bar::-webkit-scrollbar{display:none}
+.tab{padding:7px 12px;font-size:12px;font-weight:500;border:none;background:none;color:var(--text2);cursor:pointer;border-radius:7px;white-space:nowrap;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;transition:all .15s}
+.tab:hover{background:var(--bg3);color:var(--text)}
+.tab.active{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+
+/* ────── CONTENT ────── */
+.content{flex:1;overflow-y:auto;padding:1.25rem}
+.content::-webkit-scrollbar{width:5px}
+.content::-webkit-scrollbar-track{background:transparent}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.section{display:none}.section.active{display:block}
+
+/* ────── CARDS ────── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1rem}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;margin-bottom:.875rem;letter-spacing:-.2px}
+
+/* ────── METRICS ────── */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin-bottom:1rem}
+.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:.875rem 1rem}
+.metric-label{font-size:11px;color:var(--text2);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
+.metric-value{font-size:22px;font-weight:600;font-family:'Syne',sans-serif;letter-spacing:-.5px}
+.mv-green{color:var(--green)}.mv-amber{color:var(--amber)}.mv-red{color:var(--red)}.mv-blue{color:var(--blue)}.mv-purple{color:var(--purple)}
+
+/* ────── FORMS ────── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem}
+.form-row.full{grid-template-columns:1fr}
+.form-row.three{grid-template-columns:1fr 1fr 1fr}
+.form-group label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.3px}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;
+  color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border .15s
+}
+.form-group input:focus,.form-group select,.form-group textarea:focus{border-color:var(--green)}
+.form-group select{cursor:pointer}
+.form-group select option{background:var(--bg3)}
+.form-group textarea{resize:vertical;min-height:60px}
+input[type=date],input[type=time],input[type=number]{color-scheme:dark}
+
+/* ────── BUTTONS ────── */
+.btn{padding:8px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn:hover{border-color:var(--green);color:var(--green)}
+.btn.primary{background:var(--green);border-color:var(--green2);color:#000;font-weight:600}
+.btn.primary:hover{background:#16a34a;border-color:#15803d}
+.btn.danger{color:var(--text2)}.btn.danger:hover{border-color:var(--red);color:var(--red)}
+.btn-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.875rem}
+
+/* ────── BADGES ────── */
+.badge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;letter-spacing:.2px}
+.badge.pago{background:var(--green-bg);color:var(--green);border:1px solid var(--green2)}
+.badge.pendente{background:var(--amber-bg);color:var(--amber);border:1px solid #5a3a00}
+.badge.cancelado{background:var(--red-bg);color:var(--red);border:1px solid #5a0505}
+.badge.interno{background:var(--blue-bg);color:var(--blue);border:1px solid #1e3a6e}
+.badge.externo{background:var(--purple-bg);color:var(--purple);border:1px solid #3d2d7a}
+
+/* ────── TABLE ────── */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10px;font-weight:600;color:var(--text3);padding:7px 10px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.5px}
+td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.tbl-wrap{overflow-x:auto}
+
+/* ────── PROGRESS ────── */
+.progress-bar{height:5px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;background:var(--green);border-radius:4px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* ────── ENTREGADOR TOGGLE ────── */
+.etog-row{display:flex;gap:.5rem;margin-bottom:.75rem}
+.etog{flex:1;padding:10px;border:1px solid var(--border2);border-radius:8px;cursor:pointer;text-align:center;font-size:12px;font-weight:500;background:var(--bg3);color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s}
+.etog.sel-int{border-color:var(--blue);background:var(--blue-bg);color:var(--blue)}
+.etog.sel-ext{border-color:var(--purple);background:var(--purple-bg);color:var(--purple)}
+.ext-extra{display:none}.ext-extra.show{display:block}
+
+/* ────── MSG BOX ────── */
+.msg-box{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:1rem;margin-bottom:.75rem;font-size:13px;line-height:1.65;white-space:pre-wrap;position:relative;font-family:'DM Sans',sans-serif}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s}
+.copy-btn:hover{border-color:var(--green);color:var(--green)}
+
+/* ────── INV CATS ────── */
+.inv-cats{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+.inv-cat{flex:1;min-width:100px;background:var(--bg3);border-radius:8px;padding:.75rem;text-align:center;border:1px solid var(--border)}
+.inv-cat-label{font-size:10px;color:var(--text2);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.3px}
+.inv-cat-val{font-size:16px;font-weight:600;color:var(--red);font-family:'Syne',sans-serif}
+
+/* ────── DATA HINT ────── */
+.data-hint{font-size:12px;color:var(--amber);background:var(--amber-bg);border:1px solid #5a3a00;border-radius:8px;padding:8px 12px;margin-bottom:.75rem}
+
+/* ────── TOAST ────── */
+#toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:9px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999;white-space:nowrap}
+
+/* ────── ROI CARD ────── */
+.roi-card{border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1rem}
+.roi-card.pos{background:var(--green-bg);border:1px solid var(--green2)}
+.roi-card.neg{background:var(--red-bg);border:1px solid #5a0505}
+
+/* ────── ENTREGADOR PERF CARD ────── */
+.ec-card{border-radius:8px;padding:.75rem 1rem;margin-bottom:.75rem;border:1px solid}
+.ec-int{background:var(--blue-bg);border-color:#1e3a6e}
+.ec-ext{background:var(--purple-bg);border-color:#3d2d7a}
+.ent-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+
+/* ────── RANKING ────── */
+.rank-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.rank-item:last-child{border-bottom:none}
+
+/* ────── EMPTY STATE ────── */
+.empty{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
+
+/* ────── DIVISOR ────── */
+.divider{height:1px;background:var(--border);margin:1rem 0}
+
+/* ────── CHANGE PASSWORD MODAL ────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(4px);display:none}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;width:100%;max-width:360px;animation:fadeUp .25s ease}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ────── LIVE PREVIEW INDICATOR ────── */
+.live-dot{display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;margin-right:5px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+@media(max-width:600px){
+  .form-row{grid-template-columns:1fr}
+  .form-row.three{grid-template-columns:1fr}
+  .ent-grid{grid-template-columns:1fr}
+  .metric-grid{grid-template-columns:repeat(2,1fr)}
+  .header-sub{display:none}
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+<body>
+
+<!-- ════════════════ TELA DE LOGIN ════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-icon">🍱</div>
+      <h1>Marmitas Manager</h1>
+      <p>Gestão inteligente do seu negócio</p>
+    </div>
+    <div class="login-card">
+      <div class="login-tabs">
+        <div class="login-tab active" onclick="setLoginTab('entrar')" id="tab-entrar">Entrar</div>
+        <div class="login-tab" onclick="setLoginTab('criar')" id="tab-criar">Criar conta</div>
+      </div>
+
+      <!-- ENTRAR -->
+      <div id="form-entrar">
+        <div class="lf-group">
+          <label>Usuário</label>
+          <input type="text" id="login-user" placeholder="Seu usuário" autocomplete="username">
+        </div>
+        <div class="lf-group">
+          <label>Senha</label>
+          <input type="password" id="login-pass" placeholder="Sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <button class="btn-login" onclick="doLogin()">Entrar</button>
+        <div class="login-error" id="login-err"></div>
+      </div>
+
+      <!-- CRIAR CONTA -->
+      <div id="form-criar" style="display:none">
+        <div class="lf-group">
+          <label>Usuário</label>
+          <input type="text" id="reg-user" placeholder="Escolha um nome de usuário">
+        </div>
+        <div class="lf-group">
+          <label>Senha</label>
+          <input type="password" id="reg-pass" placeholder="Crie uma senha">
+        </div>
+        <div class="lf-group">
+          <label>Confirmar senha</label>
+          <input type="password" id="reg-pass2" placeholder="Repita a senha" onkeydown="if(event.key==='Enter')doRegister()">
+        </div>
+        <button class="btn-login" onclick="doRegister()">Criar conta</button>
+        <div class="login-error" id="reg-err"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ APP PRINCIPAL ════════════════ -->
+<div id="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-logo">🍱</div>
+      <div>
+        <div class="header-title">Marmitas Manager</div>
+        <div class="header-sub"><span class="live-dot"></span>Dados em tempo real</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="user-badge" id="user-badge">—</div>
+      <button class="hbtn" onclick="openChangePass()"><i class="ti ti-key"></i> Senha</button>
+      <button class="hbtn danger" onclick="doLogout()"><i class="ti ti-logout"></i> Sair</button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs-bar">
+    <button class="tab active" onclick="switchTab('painel')"><i class="ti ti-layout-dashboard"></i> Painel</button>
+    <button class="tab" onclick="switchTab('pedido')"><i class="ti ti-plus"></i> Novo Pedido</button>
+    <button class="tab" onclick="switchTab('historico')"><i class="ti ti-history"></i> Histórico</button>
+    <button class="tab" onclick="switchTab('entregadores')"><i class="ti ti-bike"></i> Entregadores</button>
+    <button class="tab" onclick="switchTab('investimentos')"><i class="ti ti-trending-up"></i> Investimentos</button>
+    <button class="tab" onclick="switchTab('mensagens')"><i class="ti ti-message"></i> Mensagens</button>
+    <button class="tab" onclick="switchTab('config')"><i class="ti ti-settings"></i> Config</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ──── PAINEL ──── -->
+    <div id="tab-painel" class="section active">
+      <div class="metric-grid" id="metrics"></div>
+      <div id="roi-painel"></div>
+      <div class="card">
+        <div class="card-title">Meta do dia</div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:4px">
+          <span id="meta-info">0 / 0 marmitas</span><span id="meta-pct">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="meta-bar" style="width:0%"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Resumo de entregas hoje</div>
+        <div id="entregas-hoje"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Pedidos de hoje</div>
+        <div id="hoje-lista"><div class="empty">Nenhum pedido hoje ainda.</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Clientes frequentes</div>
+        <div id="ranking-lista"><div class="empty">Nenhum dado ainda.</div></div>
+      </div>
+    </div>
+
+    <!-- ──── PEDIDO ──── -->
+    <div id="tab-pedido" class="section">
+      <div class="card">
+        <div class="card-title">Registrar pedido</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="ti ti-calendar"></i> Data do pedido</label>
+            <input type="date" id="p-data" onchange="verificarData()">
+          </div>
+          <div class="form-group">
+            <label>Horário</label>
+            <input type="time" id="p-hora">
+          </div>
+        </div>
+        <div id="data-aviso" class="data-hint" style="display:none"></div>
+        <div class="divider"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Nome do cliente</label><input type="text" id="p-nome" placeholder="Ex: João da Silva"></div>
+          <div class="form-group"><label>WhatsApp</label><input type="tel" id="p-tel" placeholder="Ex: 62 9xxxx-xxxx"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Prato</label><input type="text" id="p-prato" placeholder="Ex: Frango grelhado + arroz"></div>
+          <div class="form-group"><label>Quantidade</label><input type="number" id="p-qtd" value="1" min="1" max="99"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Valor por marmita (R$)</label><input type="number" id="p-valor" step="0.01" placeholder="Ex: 20.00"></div>
+          <div class="form-group"><label>Forma de pagamento</label>
+            <select id="p-pgto"><option>Pix</option><option>Dinheiro</option><option>Cartão</option></select>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group"><label>Endereço / Bairro</label><input type="text" id="p-end" placeholder="Ex: Rua das Flores, Res. Sol Nascente"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Tipo</label><select id="p-tipo" onchange="toggleTipo()"><option>Entrega</option><option>Retirada</option></select></div>
+          <div class="form-group"><label>Status</label><select id="p-status"><option>Pendente</option><option>Pago</option><option>Cancelado</option></select></div>
+        </div>
+        <div id="entregador-section">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px;font-weight:500">Tipo de entregador</div>
+          <div class="etog-row">
+            <button class="etog sel-int" id="tog-int" onclick="selecionarEntregador('interno')"><i class="ti ti-building-store"></i> Interno (restaurante)</button>
+            <button class="etog" id="tog-ext" onclick="selecionarEntregador('externo')"><i class="ti ti-bike"></i> Externo (motoboy)</button>
+          </div>
+          <div class="ext-extra" id="ext-fields">
+            <div class="form-row three">
+              <div class="form-group"><label>Nome do entregador</label><input type="text" id="p-entregador-nome" placeholder="Ex: Carlos Moto"></div>
+              <div class="form-group"><label>Taxa de entrega (R$)</label><input type="number" id="p-taxa" step="0.01" placeholder="Ex: 5.00" oninput="atualizarResumo()"></div>
+              <div class="form-group"><label>Quem paga a taxa?</label>
+                <select id="p-taxa-paga" onchange="atualizarResumo()">
+                  <option value="cliente">Cliente</option>
+                  <option value="eu">Eu (desconta do lucro)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-row full" style="margin-top:.5rem">
+          <div class="form-group"><label>Observação</label><textarea id="p-obs" placeholder="Ex: sem cebola, bem passado..."></textarea></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" onclick="salvarPedido()"><i class="ti ti-check"></i> Salvar pedido</button>
+          <button class="btn" onclick="limparForm()"><i class="ti ti-x"></i> Limpar</button>
+        </div>
+        <div id="resumo-pedido" style="margin-top:.875rem;font-size:12px;color:var(--text2);background:var(--bg3);padding:8px 12px;border-radius:8px;display:none"></div>
+      </div>
+    </div>
+
+    <!-- ──── HISTÓRICO ──── -->
+    <div id="tab-historico" class="section">
+      <div class="card">
+        <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+          <div class="form-group" style="flex:1;min-width:140px;margin-bottom:0"><input type="text" id="busca" placeholder="Buscar nome ou prato..." oninput="renderHistorico()"></div>
+          <select id="filtro-status" onchange="renderHistorico()" style="padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none;cursor:pointer">
+            <option value="">Todos status</option><option>Pendente</option><option>Pago</option><option>Cancelado</option>
+          </select>
+          <select id="filtro-entregador" onchange="renderHistorico()" style="padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none;cursor:pointer">
+            <option value="">Todos entregadores</option><option value="interno">Interno</option><option value="externo">Externo</option>
+          </select>
+          <button class="btn danger" onclick="if(confirm('Limpar todo o histórico?')){pedidos=[];salvar();renderTudo()}"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Data</th><th>Hora</th><th>Cliente</th><th>Prato</th><th>Qtd</th><th>Total</th><th>Comissão</th><th>Entregador</th><th>Status</th><th></th></tr></thead>
+            <tbody id="tabela-historico"></tbody>
+          </table>
+          <div id="hist-empty" class="empty" style="display:none">Nenhum pedido encontrado.</div>
+        </div>
+        <div id="hist-total" style="font-size:12px;color:var(--text2);margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border)"></div>
+      </div>
+    </div>
+
+    <!-- ──── ENTREGADORES ──── -->
+    <div id="tab-entregadores" class="section">
+      <div class="metric-grid" id="ent-metrics"></div>
+      <div class="card">
+        <div class="card-title">Cadastrar entregador externo</div>
+        <div class="form-row">
+          <div class="form-group"><label>Nome</label><input type="text" id="e-nome" placeholder="Ex: Carlos Moto"></div>
+          <div class="form-group"><label>WhatsApp</label><input type="tel" id="e-tel" placeholder="Ex: 62 9xxxx-xxxx"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Taxa padrão (R$)</label><input type="number" id="e-taxa" step="0.01" placeholder="Ex: 5.00"></div>
+          <div class="form-group"><label>Área de atuação</label><input type="text" id="e-area" placeholder="Ex: Centro, Res. Sol Nascente"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" onclick="salvarEntregador()"><i class="ti ti-check"></i> Cadastrar</button>
+          <button class="btn" onclick="limparEnt()">Limpar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Entregadores cadastrados</div>
+        <div id="lista-entregadores"><div class="empty">Nenhum entregador externo cadastrado.</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Desempenho por entregador</div>
+        <div id="ent-desempenho"><div class="empty">Nenhum dado ainda.</div></div>
+      </div>
+    </div>
+
+    <!-- ──── INVESTIMENTOS ──── -->
+    <div id="tab-investimentos" class="section">
+      <div class="card">
+        <div class="card-title">Registrar investimento</div>
+        <div class="form-row">
+          <div class="form-group"><label>Descrição</label><input type="text" id="i-desc" placeholder="Ex: Meta Ads — campanha marmita"></div>
+          <div class="form-group"><label>Categoria</label>
+            <select id="i-cat">
+              <option>Tráfego pago</option><option>Material gráfico</option><option>Ferramenta / app</option>
+              <option>Entrega / motoboy</option><option>Panfleto / impressão</option><option>Outro</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row three">
+          <div class="form-group"><label>Valor (R$)</label><input type="number" id="i-valor" step="0.01" placeholder="Ex: 50.00"></div>
+          <div class="form-group"><label>Data</label><input type="date" id="i-data"></div>
+          <div class="form-group"><label>Plataforma / local</label><input type="text" id="i-plat" placeholder="Ex: Meta Ads"></div>
+        </div>
+        <div class="form-row full"><div class="form-group"><label>Observação</label><textarea id="i-obs" placeholder="Ex: campanha 7 dias..."></textarea></div></div>
+        <div class="btn-row">
+          <button class="btn primary" onclick="salvarInv()"><i class="ti ti-check"></i> Salvar</button>
+          <button class="btn" onclick="limparInv()">Limpar</button>
+        </div>
+      </div>
+      <div class="metric-grid" id="inv-metrics"></div>
+      <div class="card">
+        <div class="card-title">Por categoria</div>
+        <div class="inv-cats" id="inv-cats"><div style="font-size:13px;color:var(--text2)">Nenhum investimento ainda.</div></div>
+      </div>
+      <div id="roi-card-inv"></div>
+      <div class="card">
+        <div class="card-title">Histórico de investimentos</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Plataforma</th><th>Valor</th><th></th></tr></thead>
+            <tbody id="tabela-inv"></tbody>
+          </table>
+          <div id="inv-empty" class="empty" style="display:none">Nenhum investimento registrado.</div>
+        </div>
+        <div id="inv-hist-total" style="font-size:12px;color:var(--text2);margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border)"></div>
+      </div>
+    </div>
+
+    <!-- ──── MENSAGENS ──── -->
+    <div id="tab-mensagens" class="section">
+      <div class="card">
+        <div class="card-title">Gerador de mensagens</div>
+        <div class="form-row">
+          <div class="form-group"><label>Marca / seu nome</label><input type="text" id="m-marca" placeholder="Ex: Marmitas da Ana" oninput="autoGerar()"></div>
+          <div class="form-group"><label>WhatsApp</label><input type="tel" id="m-wpp" placeholder="Ex: 62 9xxxx-xxxx" oninput="autoGerar()"></div>
+        </div>
+        <div class="form-row full"><div class="form-group"><label>Pratos do dia (separe por vírgula)</label><input type="text" id="m-pratos" placeholder="Ex: Frango, Carne assada, Tilápia" oninput="autoGerar()"></div></div>
+        <div class="form-row">
+          <div class="form-group"><label>Preço</label><input type="text" id="m-preco" placeholder="Ex: R$20" oninput="autoGerar()"></div>
+          <div class="form-group"><label>Horário de entrega</label><input type="text" id="m-hora" placeholder="Ex: 11h às 13h" oninput="autoGerar()"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" onclick="gerarMensagens()"><i class="ti ti-sparkles"></i> Gerar mensagens</button>
+        </div>
+        <p style="font-size:11px;color:var(--text3);margin-top:.5rem"><span class="live-dot"></span> As mensagens atualizam automaticamente enquanto você digita</p>
+      </div>
+      <div id="mensagens-geradas"></div>
+    </div>
+
+    <!-- ──── CONFIG ──── -->
+    <div id="tab-config" class="section">
+      <div class="card">
+        <div class="card-title">Configurações gerais</div>
+        <div class="form-row">
+          <div class="form-group"><label>Sua comissão (%)</label><input type="number" id="cfg-pct" value="40" min="1" max="100" oninput="salvarConfig()"></div>
+          <div class="form-group"><label>Meta diária de marmitas</label><input type="number" id="cfg-meta" value="30" min="1" oninput="salvarConfig()"></div>
+        </div>
+        <div class="form-row full"><div class="form-group"><label>Nome do restaurante parceiro</label><input type="text" id="cfg-rest" placeholder="Ex: Restaurante do Zé" oninput="salvarConfig()"></div></div>
+        <p style="font-size:12px;color:var(--text2);margin-top:.5rem"><span class="live-dot"></span> Configurações salvas automaticamente enquanto você digita</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Exportar dados (CSV)</div>
+        <div class="btn-row">
+          <button class="btn" onclick="exportarCSV('pedidos')"><i class="ti ti-download"></i> Pedidos</button>
+          <button class="btn" onclick="exportarCSV('investimentos')"><i class="ti ti-download"></i> Investimentos</button>
+          <button class="btn" onclick="exportarCSV('entregadores')"><i class="ti ti-download"></i> Entregadores</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--red)">Zona de perigo</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:.875rem">Apagar todos os dados permanentemente (pedidos, investimentos, entregadores).</p>
+        <button class="btn danger" onclick="resetarTudo()"><i class="ti ti-trash"></i> Apagar todos os dados</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<!-- ════ MODAL TROCAR SENHA ════ -->
+<div class="modal-overlay" id="modal-senha">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+      <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:600">Alterar senha</div>
+      <button class="btn" style="padding:5px 10px" onclick="closeChangePass()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="lf-group">
+      <label>Senha atual</label>
+      <input type="password" id="cp-atual" placeholder="Senha atual">
+    </div>
+    <div class="lf-group">
+      <label>Nova senha</label>
+      <input type="password" id="cp-nova" placeholder="Nova senha">
+    </div>
+    <div class="lf-group">
+      <label>Confirmar nova senha</label>
+      <input type="password" id="cp-conf" placeholder="Repita a nova senha">
+    </div>
+    <div class="login-error" id="cp-err"></div>
+    <button class="btn-login" style="margin-top:.5rem" onclick="trocarSenha()">Salvar nova senha</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+// ═══════════════════════════════════════════════
+//  AUTENTICAÇÃO SUPABASE
+// ═══════════════════════════════════════════════
+
+const SUPABASE_URL = "https://pprljsmdcvvetczhqewk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_NfrBhVBJHb0SzGLxjBM4ow_SEYMRXWg";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let currentUser = null;
+
+async function doLogin(){
+  const email = document.getElementById('login-user').value.trim();
+  const password = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+
+  err.textContent = '';
+
+  if(!email || !password){
+    err.textContent = 'Preencha todos os campos';
+    return;
+  }
+
+  try {
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if(error) {
+      err.textContent = 'Login inválido';
+      return;
+    }
+
+    iniciarApp(data.user.email);
+
+  } catch(e) {
+    console.error(e);
+    err.textContent = 'Erro ao entrar';
+  }
+}
+
+async function doRegister(){
+  const email = document.getElementById('reg-user').value.trim();
+  const password = document.getElementById('reg-pass').value;
+  const password2 = document.getElementById('reg-pass2').value;
+  const err = document.getElementById('reg-err');
+
+  err.textContent = '';
+
+  if(!email || !password || !password2){
+    err.textContent = 'Preencha todos os campos';
+    return;
+  }
+
+  if(password !== password2){
+    err.textContent = 'Senhas não coincidem';
+    return;
+  }
+
+  try {
+
+    const { data, error } = await supabaseClient.auth.signUp({
+      email,
+      password
+    });
+
+    if(error){
+      err.textContent = error.message;
+      return;
+    }
+
+    toast('Conta criada com sucesso!');
+    iniciarApp(email);
+
+  } catch(e){
+    console.error(e);
+    err.textContent = 'Erro ao criar conta';
+  }
+}
+
+async function doLogout(){
+  await supabaseClient.auth.signOut();
+
+  currentUser = null;
+
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('login-screen').style.display='flex';
+}
+
+function openChangePass(){document.getElementById('modal-senha').classList.add('open');}
+function closeChangePass(){
+  document.getElementById('modal-senha').classList.remove('open');
+}
+
+async function trocarSenha(){
+  const nova=document.getElementById('cp-nova').value;
+  const conf=document.getElementById('cp-conf').value;
+  const err=document.getElementById('cp-err');
+
+  if(!nova || !conf){
+    err.textContent='Preencha todos os campos';
+    return;
+  }
+
+  if(nova !== conf){
+    err.textContent='Senhas não coincidem';
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.updateUser({
+    password:nova
+  });
+
+  if(error){
+    err.textContent='Erro ao alterar senha';
+    return;
+  }
+
+  closeChangePass();
+  toast('Senha alterada!');
+}
+
+function iniciarApp(user){
+
+  currentUser=user;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').classList.add('visible');
+  document.getElementById('user-badge').textContent='👤 '+user;
+  carregar();
+}
+
+
+// AUTO LOGIN SUPABASE
+supabaseClient.auth.getSession().then(({ data }) => {
+  if(data.session){
+    iniciarApp(data.session.user.email);
+  }
+});
+
+
+// ═══════════════════════════════════════════════
+//  DADOS (prefixados por usuário)
+// ═══════════════════════════════════════════════
+let pedidos=[],investimentos=[],entregadores=[],config={pct:40,meta:30,restaurante:''};
+let tipoEntregador='interno';
+
+function key(k){return 'mm_'+currentUser+'_'+k;}
+
+function salvar(){try{localStorage.setItem(key('pedidos'),JSON.stringify(pedidos));}catch(e){}}
+function salvarInv2(){try{localStorage.setItem(key('inv'),JSON.stringify(investimentos));}catch(e){}}
+function salvarEnt2(){try{localStorage.setItem(key('ent'),JSON.stringify(entregadores));}catch(e){}}
+function salvarConfig(){
+  config.pct=parseFloat(document.getElementById('cfg-pct').value)||40;
+  config.meta=parseInt(document.getElementById('cfg-meta').value)||30;
+  config.restaurante=document.getElementById('cfg-rest').value;
+  try{localStorage.setItem(key('config'),JSON.stringify(config));}catch(e){}
+  renderTudo();
+}
+
+function carregar(){
+  pedidos=[]; investimentos=[]; entregadores=[]; config={pct:40,meta:30,restaurante:''};
+  try{const r=localStorage.getItem(key('pedidos'));if(r)pedidos=JSON.parse(r);}catch(e){}
+  try{const r=localStorage.getItem(key('inv'));if(r)investimentos=JSON.parse(r);}catch(e){}
+  try{const r=localStorage.getItem(key('ent'));if(r)entregadores=JSON.parse(r);}catch(e){}
+  try{
+    const r=localStorage.getItem(key('config'));
+    if(r){config={...config,...JSON.parse(r)};
+      document.getElementById('cfg-pct').value=config.pct;
+      document.getElementById('cfg-meta').value=config.meta;
+      document.getElementById('cfg-rest').value=config.restaurante||'';
+    }
+  }catch(e){}
+  document.getElementById('p-data').value=dataISO();
+  document.getElementById('p-hora').value=horaAgora();
+  document.getElementById('i-data').value=dataISO();
+  switchTab('painel');
+  renderTudo();
+}
+
+// ═══════════════════════════════════════════════
+//  UTILITÁRIOS
+// ═══════════════════════════════════════════════
+function dataISO(){return new Date().toISOString().slice(0,10);}
+function horaAgora(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+function hoje(){return new Date().toLocaleDateString('pt-BR');}
+function isoParaBR(iso){if(!iso)return hoje();const d=new Date(iso+'T12:00:00');return d.toLocaleDateString('pt-BR');}
+function brParaISO(br){if(!br)return '';const[d,m,y]=br.split('/');return `${y}-${m}-${d}`;}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2200);}
+
+function switchTab(id){
+  const ids=['painel','pedido','historico','entregadores','investimentos','mensagens','config'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',ids[i]===id));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id==='painel')renderPainel();
+  if(id==='historico')renderHistorico();
+  if(id==='entregadores')renderEntregadores();
+  if(id==='investimentos')renderInvestimentos();
+}
+
+// ═══════════════════════════════════════════════
+//  RESET
+// ═══════════════════════════════════════════════
+function resetarTudo(){
+  if(!confirm('Tem certeza? Todos os dados serão apagados permanentemente!'))return;
+  pedidos=[];investimentos=[];entregadores=[];
+  salvar();salvarInv2();salvarEnt2();
+  renderTudo();toast('Todos os dados apagados');
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER PAINEL
+// ═══════════════════════════════════════════════
+function renderTudo(){renderPainel();renderHistorico();renderEntregadores();renderInvestimentos();}
+
+function renderPainel(){
+  const todayStr=hoje();
+  const dHoje=pedidos.filter(p=>p.data===todayStr&&p.status!=='Cancelado');
+  const qtdHoje=dHoje.reduce((s,p)=>s+p.qtd,0);
+  const totalHoje=dHoje.reduce((s,p)=>s+p.total,0);
+  const comissaoHoje=totalHoje*(config.pct/100);
+  const taxasEuHoje=dHoje.filter(p=>p.taxaPagaPor==='eu').reduce((s,p)=>s+parseFloat(p.taxaEntrega||0),0);
+  const lucroHoje=comissaoHoje-taxasEuHoje;
+  const pagos=dHoje.filter(p=>p.status==='Pago').reduce((s,p)=>s+p.total,0);
+  const pct=config.meta>0?Math.min(100,Math.round(qtdHoje/config.meta*100)):0;
+  const comTotal=pedidos.filter(p=>p.status!=='Cancelado').reduce((s,p)=>s+p.total,0)*(config.pct/100);
+  const taxasEuTotal=pedidos.filter(p=>p.taxaPagaPor==='eu'&&p.status!=='Cancelado').reduce((s,p)=>s+parseFloat(p.taxaEntrega||0),0);
+  const invTotal=investimentos.reduce((s,i)=>s+i.valor,0);
+  const lucroLiq=comTotal-taxasEuTotal-invTotal;
+  const roi=invTotal>0?((comTotal-taxasEuTotal-invTotal)/invTotal*100):null;
+
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Marmitas hoje</div><div class="metric-value">${qtdHoje}</div></div>
+    <div class="metric"><div class="metric-label">Comissão hoje</div><div class="metric-value mv-green">R$${comissaoHoje.toFixed(2)}</div></div>
+    <div class="metric"><div class="metric-label">Lucro hoje (líq.)</div><div class="metric-value ${lucroHoje>=0?'mv-green':'mv-red'}">R$${lucroHoje.toFixed(2)}</div></div>
+    <div class="metric"><div class="metric-label">Comissão total</div><div class="metric-value mv-blue">R$${comTotal.toFixed(2)}</div></div>
+    <div class="metric"><div class="metric-label">Lucro líquido</div><div class="metric-value ${lucroLiq>=0?'mv-green':'mv-red'}">R$${lucroLiq.toFixed(2)}</div></div>
+    <div class="metric"><div class="metric-label">A receber hoje</div><div class="metric-value mv-amber">R$${((totalHoje-pagos)*(config.pct/100)).toFixed(2)}</div></div>
+  `;
+
+  const roiBox=document.getElementById('roi-painel');
+  if(roi!==null){
+    const pos=roi>=0;
+    roiBox.innerHTML=`<div class="roi-card ${pos?'pos':'neg'}" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;gap:12px">
+        <i class="ti ${pos?'ti-trending-up':'ti-trending-down'}" style="font-size:26px;color:${pos?'var(--green)':'var(--red)'}"></i>
+        <div><div style="font-size:22px;font-weight:700;font-family:'Syne',sans-serif;color:${pos?'var(--green)':'var(--red)'};letter-spacing:-.5px">${roi>=0?'+':''}${roi.toFixed(1)}%</div>
+        <div style="font-size:12px;color:var(--text2)">ROI acumulado — Para cada R$1 investido, ${pos?'lucrou':'perdeu'} R$${Math.abs(roi/100).toFixed(2)} líquido</div></div>
+      </div></div>`;
+  } else {
+    roiBox.innerHTML='';
+  }
+
+  document.getElementById('meta-info').textContent=`${qtdHoje} / ${config.meta} marmitas`;
+  document.getElementById('meta-pct').textContent=`${pct}%`;
+  document.getElementById('meta-bar').style.width=pct+'%';
+
+  const entInt=dHoje.filter(p=>p.tipoEntregador==='interno'||p.tipo==='Retirada');
+  const entExt=dHoje.filter(p=>p.tipoEntregador==='externo');
+  const taxaExtHoje=entExt.reduce((s,p)=>s+parseFloat(p.taxaEntrega||0),0);
+  document.getElementById('entregas-hoje').innerHTML=`
+    <div class="ent-grid">
+      <div class="ec-card ec-int">
+        <div style="font-size:11px;color:var(--blue);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px"><i class="ti ti-building-store"></i> Interno / retirada</div>
+        <div style="font-size:24px;font-weight:700;font-family:'Syne',sans-serif">${entInt.length}</div>
+        <div style="font-size:12px;color:var(--text2)">entrega${entInt.length!==1?'s':''}</div>
+      </div>
+      <div class="ec-card ec-ext">
+        <div style="font-size:11px;color:var(--purple);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px"><i class="ti ti-bike"></i> Externo (motoboy)</div>
+        <div style="font-size:24px;font-weight:700;font-family:'Syne',sans-serif">${entExt.length}</div>
+        <div style="font-size:12px;color:var(--text2)">entrega${entExt.length!==1?'s':''} · taxa R$${taxaExtHoje.toFixed(2)}</div>
+      </div>
+    </div>`;
+
+  const lista=document.getElementById('hoje-lista');
+  if(!dHoje.length){lista.innerHTML='<div class="empty">Nenhum pedido hoje ainda.</div>';return;}
+  lista.innerHTML='<div class="tbl-wrap"><table><thead><tr><th>Hora</th><th>Cliente</th><th>Prato</th><th>Qtd</th><th>Total</th><th>Entregador</th><th>Status</th></tr></thead><tbody>'+
+    dHoje.slice().reverse().map(p=>`<tr>
+      <td style="font-size:12px;color:var(--text2)">${p.hora||'—'}</td>
+      <td>${p.nome}</td><td style="color:var(--text2)">${p.prato}</td>
+      <td>${p.qtd}</td><td>R$${p.total.toFixed(2)}</td>
+      <td>${p.tipo==='Retirada'?'<span style="font-size:11px;color:var(--text2)">Retirada</span>':p.tipoEntregador==='externo'?`<span class="badge externo">${p.nomeEntregador||'Externo'}</span>`:'<span class="badge interno">Interno</span>'}</td>
+      <td><span class="badge ${p.status.toLowerCase()}">${p.status}</span></td>
+    </tr>`).join('')+'</tbody></table></div>';
+
+  const cont={};pedidos.filter(p=>p.status!=='Cancelado').forEach(p=>{cont[p.nome]=(cont[p.nome]||0)+p.qtd;});
+  const rank=Object.entries(cont).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const rl=document.getElementById('ranking-lista');
+  if(!rank.length){rl.innerHTML='<div class="empty">Nenhum dado ainda.</div>';return;}
+  rl.innerHTML=rank.map(([n,q],i)=>`<div class="rank-item"><span>${i+1}. ${n}</span><span style="font-size:12px;color:var(--text2)">${q} marmita${q>1?'s':''}</span></div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+//  PEDIDO
+// ═══════════════════════════════════════════════
+function verificarData(){
+  const val=document.getElementById('p-data').value;
+  const aviso=document.getElementById('data-aviso');
+  if(!val){aviso.style.display='none';return;}
+  const sel=new Date(val+'T12:00:00');
+  const now=new Date();now.setHours(12,0,0,0);
+  const diff=Math.round((now-sel)/(1000*60*60*24));
+  if(diff===0){aviso.style.display='none';}
+  else if(diff>0){aviso.style.display='block';aviso.innerHTML=`<i class="ti ti-clock-back"></i> Pedido retroativo — ${diff} dia${diff>1?'s':''} atrás (${isoParaBR(val)}). Será salvo na data selecionada.`;}
+  else{aviso.style.display='block';aviso.innerHTML=`<i class="ti ti-calendar-event"></i> Data futura selecionada: ${isoParaBR(val)}.`;}
+}
+
+function selecionarEntregador(tipo){
+  tipoEntregador=tipo;
+  document.getElementById('tog-int').className='etog'+(tipo==='interno'?' sel-int':'');
+  document.getElementById('tog-ext').className='etog'+(tipo==='externo'?' sel-ext':'');
+  document.getElementById('ext-fields').className='ext-extra'+(tipo==='externo'?' show':'');
+  atualizarResumo();
+}
+
+function toggleTipo(){
+  document.getElementById('entregador-section').style.display=document.getElementById('p-tipo').value==='Entrega'?'block':'none';
+}
+
+document.getElementById('p-valor').addEventListener('input',atualizarResumo);
+document.getElementById('p-qtd').addEventListener('input',atualizarResumo);
+document.getElementById('p-taxa-paga').addEventListener('change',atualizarResumo);
+
+function atualizarResumo(){
+  const v=parseFloat(document.getElementById('p-valor').value)||0;
+  const q=parseInt(document.getElementById('p-qtd').value)||1;
+  const taxa=tipoEntregador==='externo'?parseFloat(document.getElementById('p-taxa').value)||0:0;
+  const taxaPagaPor=document.getElementById('p-taxa-paga').value;
+  const total=v*q,com=total*(config.pct/100),lucro=com-(taxaPagaPor==='eu'?taxa:0);
+  const el=document.getElementById('resumo-pedido');
+  if(v>0){
+    el.style.display='block';
+    el.textContent=`Total: R$${total.toFixed(2)} · Comissão (${config.pct}%): R$${com.toFixed(2)}`+(taxa>0&&taxaPagaPor==='eu'?` · Taxa: -R$${taxa.toFixed(2)} · Líquido: R$${lucro.toFixed(2)}`:'');
+  } else {el.style.display='none';}
+}
+
+function salvarPedido(){
+  const nome=document.getElementById('p-nome').value.trim();
+  const prato=document.getElementById('p-prato').value.trim();
+  const qtd=parseInt(document.getElementById('p-qtd').value)||1;
+  const valor=parseFloat(document.getElementById('p-valor').value)||0;
+  const dataISOver=document.getElementById('p-data').value;
+  const hora=document.getElementById('p-hora').value||horaAgora();
+  if(!nome||!prato||!valor){toast('Preencha nome, prato e valor');return;}
+  if(!dataISOver){toast('Selecione a data do pedido');return;}
+  const total=qtd*valor;
+  const tipo=document.getElementById('p-tipo').value;
+  const nomeEnt=document.getElementById('p-entregador-nome').value.trim();
+  const taxa=parseFloat(document.getElementById('p-taxa').value)||0;
+  const taxaPagaPor=document.getElementById('p-taxa-paga').value;
+  pedidos.push({
+    nome,tel:document.getElementById('p-tel').value.trim(),
+    prato,qtd,valor,total,
+    pgto:document.getElementById('p-pgto').value,
+    end:document.getElementById('p-end').value.trim(),
+    tipo,status:document.getElementById('p-status').value,
+    obs:document.getElementById('p-obs').value.trim(),
+    tipoEntregador:tipo==='Retirada'?'interno':tipoEntregador,
+    nomeEntregador:tipoEntregador==='externo'&&tipo!=='Retirada'?nomeEnt:'',
+    taxaEntrega:tipoEntregador==='externo'&&tipo!=='Retirada'?taxa:0,
+    taxaPagaPor:tipoEntregador==='externo'&&tipo!=='Retirada'?taxaPagaPor:'cliente',
+    data:isoParaBR(dataISOver),hora
+  });
+  salvar();limparForm();renderTudo();switchTab('painel');toast('Pedido salvo!');
+}
+
+function limparForm(){
+  ['p-nome','p-tel','p-prato','p-end','p-obs','p-entregador-nome','p-taxa'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-qtd').value=1;
+  document.getElementById('p-valor').value='';
+  document.getElementById('p-status').value='Pendente';
+  document.getElementById('p-data').value=dataISO();
+  document.getElementById('p-hora').value=horaAgora();
+  document.getElementById('data-aviso').style.display='none';
+  document.getElementById('resumo-pedido').style.display='none';
+  selecionarEntregador('interno');
+}
+
+// ═══════════════════════════════════════════════
+//  HISTÓRICO
+// ═══════════════════════════════════════════════
+function renderHistorico(){
+  const busca=(document.getElementById('busca').value||'').toLowerCase();
+  const filtro=document.getElementById('filtro-status').value;
+  const filtroEnt=document.getElementById('filtro-entregador').value;
+  let lista=pedidos.filter(p=>{
+    const okB=!busca||(p.nome.toLowerCase().includes(busca)||p.prato.toLowerCase().includes(busca));
+    const okS=!filtro||p.status===filtro;
+    const okE=!filtroEnt||(filtroEnt==='interno'?(p.tipoEntregador==='interno'||p.tipo==='Retirada'):p.tipoEntregador==='externo');
+    return okB&&okS&&okE;
+  });
+  lista=lista.slice().sort((a,b)=>{
+    const da=brParaISO(a.data)||'';const db=brParaISO(b.data)||'';
+    if(da!==db)return db.localeCompare(da);
+    return (b.hora||'').localeCompare(a.hora||'');
+  });
+  const tbody=document.getElementById('tabela-historico');
+  const empty=document.getElementById('hist-empty');
+  const total=document.getElementById('hist-total');
+  if(!lista.length){tbody.innerHTML='';empty.style.display='block';total.innerHTML='';return;}
+  empty.style.display='none';
+  const todayStr=hoje();
+  tbody.innerHTML=lista.map(p=>`<tr>
+    <td style="white-space:nowrap;font-size:12px">${p.data}${p.data===todayStr?' <span style="font-size:10px;color:var(--green)">hoje</span>':''}</td>
+    <td style="font-size:12px;color:var(--text2)">${p.hora||'—'}</td>
+    <td>${p.nome}</td>
+    <td style="color:var(--text2);font-size:12px">${p.prato}</td>
+    <td>${p.qtd}</td><td>R$${p.total.toFixed(2)}</td>
+    <td style="color:var(--green);font-weight:600">R$${(p.total*(config.pct/100)).toFixed(2)}</td>
+    <td>${p.tipo==='Retirada'?'<span style="font-size:11px;color:var(--text2)">Retirada</span>':p.tipoEntregador==='externo'?`<span class="badge externo">${p.nomeEntregador||'Externo'}</span>`:'<span class="badge interno">Interno</span>'}</td>
+    <td><span class="badge ${p.status.toLowerCase()}">${p.status}</span></td>
+    <td><button class="btn danger" style="padding:4px 8px;font-size:11px" onclick="deletarPedido(${pedidos.indexOf(p)})"><i class="ti ti-trash"></i></button></td>
+  </tr>`).join('');
+  const validos=lista.filter(p=>p.status!=='Cancelado');
+  const totFat=validos.reduce((s,p)=>s+p.total,0);
+  const totCom=totFat*(config.pct/100);
+  total.innerHTML=`<b>${lista.length}</b> pedido(s) · Faturado: <b>R$${totFat.toFixed(2)}</b> · Comissão: <b style="color:var(--green)">R$${totCom.toFixed(2)}</b>`;
+}
+
+function deletarPedido(idx){if(!confirm('Remover pedido?'))return;pedidos.splice(idx,1);salvar();renderTudo();toast('Pedido removido');}
+
+// ═══════════════════════════════════════════════
+//  ENTREGADORES
+// ═══════════════════════════════════════════════
+function renderEntregadores(){
+  const ext=pedidos.filter(p=>p.tipoEntregador==='externo'&&p.status!=='Cancelado');
+  const int=pedidos.filter(p=>(p.tipoEntregador==='interno'||p.tipo==='Retirada')&&p.status!=='Cancelado');
+  const taxaTot=ext.reduce((s,p)=>s+parseFloat(p.taxaEntrega||0),0);
+  const taxaEu=ext.filter(p=>p.taxaPagaPor==='eu').reduce((s,p)=>s+parseFloat(p.taxaEntrega||0),0);
+  document.getElementById('ent-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Entregas internas</div><div class="metric-value mv-blue">${int.length}</div></div>
+    <div class="metric"><div class="metric-label">Entregas externas</div><div class="metric-value mv-purple">${ext.length}</div></div>
+    <div class="metric"><div class="metric-label">Total em taxas</div><div class="metric-value mv-amber">R$${taxaTot.toFixed(2)}</div></div>
+    <div class="metric"><div class="metric-label">Saiu do seu bolso</div><div class="metric-value mv-red">R$${taxaEu.toFixed(2)}</div></div>
+  `;
+  const le=document.getElementById('lista-entregadores');
+  if(!entregadores.length){le.innerHTML='<div class="empty">Nenhum entregador cadastrado.</div>';}
+  else le.innerHTML=entregadores.map((e,i)=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div><div style="font-weight:500;font-size:14px"><i class="ti ti-bike" style="color:var(--purple)"></i> ${e.nome}</div>
+      <div style="font-size:12px;color:var(--text2)">${e.tel||'—'} · Taxa: R$${parseFloat(e.taxa||0).toFixed(2)} · ${e.area||'—'}</div></div>
+      <button class="btn danger" style="padding:4px 8px;font-size:11px" onclick="deletarEnt(${i})"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+  const perf={};
+  ext.forEach(p=>{const n=p.nomeEntregador||'Não identificado';if(!perf[n])perf[n]={qtd:0,taxa:0,entregas:0};perf[n].qtd+=p.qtd;perf[n].taxa+=parseFloat(p.taxaEntrega||0);perf[n].entregas++;});
+  const dp=document.getElementById('ent-desempenho');
+  if(!Object.keys(perf).length){dp.innerHTML='<div class="empty">Nenhuma entrega externa registrada.</div>';return;}
+  dp.innerHTML='<div class="tbl-wrap"><table><thead><tr><th>Entregador</th><th>Entregas</th><th>Marmitas</th><th>Total taxas</th></tr></thead><tbody>'+
+    Object.entries(perf).sort((a,b)=>b[1].entregas-a[1].entregas).map(([n,v])=>`<tr>
+      <td><span class="badge externo"><i class="ti ti-bike"></i> ${n}</span></td>
+      <td>${v.entregas}</td><td>${v.qtd}</td><td>R$${v.taxa.toFixed(2)}</td>
+    </tr>`).join('')+'</tbody></table></div>';
+}
+
+function salvarEntregador(){
+  const nome=document.getElementById('e-nome').value.trim();
+  if(!nome){toast('Informe o nome');return;}
+  entregadores.push({nome,tel:document.getElementById('e-tel').value.trim(),taxa:parseFloat(document.getElementById('e-taxa').value)||0,area:document.getElementById('e-area').value.trim()});
+  salvarEnt2();limparEnt();renderEntregadores();toast('Entregador cadastrado!');
+}
+function limparEnt(){['e-nome','e-tel','e-taxa','e-area'].forEach(id=>document.getElementById(id).value='');}
+function deletarEnt(idx){if(!confirm('Remover?'))return;entregadores.splice(idx,1);salvarEnt2();renderEntregadores();toast('Removido');}
+
+// ═══════════════════════════════════════════════
+//  INVESTIMENTOS
+// ═══════════════════════════════════════════════
+function renderInvestimentos(){
+  const total=investimentos.reduce((s,i)=>s+i.valor,0);
+  const taxasEu=pedidos.filter(p=>p.taxaPagaPor==='eu'&&p.status!=='Cancelado').reduce((s,p)=>s+parseFloat(p.taxaEntrega||0),0);
+  const comissao=pedidos.filter(p=>p.status!=='Cancelado').reduce((s,p)=>s+p.total,0)*(config.pct/100);
+  const lucro=comissao-taxasEu-total;
+  const roi=total>0?((comissao-taxasEu-total)/total*100):0;
+  document.getElementById('inv-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Total investido</div><div class="metric-value mv-red">R$${total.toFixed(2)}</div></div>
+    <div class="metric"><div class="metric-label">Comissão acumulada</div><div class="metric-value mv-blue">R$${comissao.toFixed(2)}</div></div>
+    <div class="metric"><div class="metric-label">Lucro líquido</div><div class="metric-value ${lucro>=0?'mv-green':'mv-red'}">R$${lucro.toFixed(2)}</div></div>
+    <div class="metric"><div class="metric-label">ROI</div><div class="metric-value ${roi>=0?'mv-green':'mv-red'}">${total>0?(roi>=0?'+':'')+roi.toFixed(1)+'%':'—'}</div></div>
+  `;
+  const cats={};investimentos.forEach(i=>{cats[i.categoria]=(cats[i.categoria]||0)+i.valor;});
+  const cd=document.getElementById('inv-cats');
+  if(!Object.keys(cats).length){cd.innerHTML='<div style="font-size:13px;color:var(--text2)">Nenhum investimento ainda.</div>';}
+  else cd.innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,val])=>`<div class="inv-cat"><div class="inv-cat-label">${cat}</div><div class="inv-cat-val">R$${val.toFixed(2)}</div></div>`).join('');
+  const rd=document.getElementById('roi-card-inv');
+  if(total>0){
+    const pos=lucro>=0;
+    rd.innerHTML=`<div class="roi-card ${pos?'pos':'neg'}" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;gap:10px">
+        <i class="ti ${pos?'ti-trending-up':'ti-trending-down'}" style="font-size:22px;color:${pos?'var(--green)':'var(--red)'}"></i>
+        <div><div style="font-weight:600;font-size:14px;color:${pos?'var(--green)':'var(--red)'}">${pos?'Investimentos gerando retorno':'Investimentos ainda não recuperados'}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px">Comissão: R$${comissao.toFixed(2)} · Gastos: R$${total.toFixed(2)} · Lucro: <b style="color:${pos?'var(--green)':'var(--red)'}">R$${lucro.toFixed(2)}</b> (ROI ${roi>=0?'+':''}${roi.toFixed(1)}%)</div></div>
+      </div></div>`;
+  } else rd.innerHTML='';
+  const tbody=document.getElementById('tabela-inv');
+  const empty=document.getElementById('inv-empty');
+  const tot=document.getElementById('inv-hist-total');
+  if(!investimentos.length){tbody.innerHTML='';empty.style.display='block';tot.innerHTML='';return;}
+  empty.style.display='none';
+  const listaInv=investimentos.slice().sort((a,b)=>brParaISO(b.data).localeCompare(brParaISO(a.data)));
+  tbody.innerHTML=listaInv.map(i=>`<tr>
+    <td style="white-space:nowrap;font-size:12px">${i.data}</td>
+    <td>${i.descricao}</td>
+    <td style="font-size:12px">${i.categoria}</td>
+    <td style="color:var(--text2)">${i.plataforma||'—'}</td>
+    <td style="color:var(--red);font-weight:600">R$${i.valor.toFixed(2)}</td>
+    <td><button class="btn danger" style="padding:4px 8px;font-size:11px" onclick="deletarInv(${investimentos.indexOf(i)})"><i class="ti ti-trash"></i></button></td>
+  </tr>`).join('');
+  tot.innerHTML=`<b>${investimentos.length}</b> investimento(s) · Total: <b style="color:var(--red)">R$${total.toFixed(2)}</b>`;
+}
+
+function deletarInv(idx){if(!confirm('Remover?'))return;investimentos.splice(idx,1);salvarInv2();renderTudo();toast('Removido');}
+
+function salvarInv(){
+  const desc=document.getElementById('i-desc').value.trim();
+  const valor=parseFloat(document.getElementById('i-valor').value)||0;
+  const data=document.getElementById('i-data').value;
+  if(!desc||!valor){toast('Preencha descrição e valor');return;}
+  investimentos.push({descricao:desc,categoria:document.getElementById('i-cat').value,valor,data:isoParaBR(data),plataforma:document.getElementById('i-plat').value.trim(),obs:document.getElementById('i-obs').value.trim()});
+  salvarInv2();limparInv();renderTudo();toast('Investimento salvo!');
+}
+function limparInv(){['i-desc','i-valor','i-plat','i-obs'].forEach(id=>document.getElementById(id).value='');document.getElementById('i-data').value=dataISO();}
+
+// ═══════════════════════════════════════════════
+//  MENSAGENS (atualização em tempo real)
+// ═══════════════════════════════════════════════
+let autoGerarTimer=null;
+function autoGerar(){
+  clearTimeout(autoGerarTimer);
+  autoGerarTimer=setTimeout(()=>{
+    if(document.getElementById('m-pratos').value||document.getElementById('m-marca').value)
+      gerarMensagens();
+  },300);
+}
+
+function gerarMensagens(){
+  const marca=document.getElementById('m-marca').value.trim()||'Marmitas';
+  const wpp=document.getElementById('m-wpp').value.trim()||'(seu número)';
+  const pratos=document.getElementById('m-pratos').value.trim()||'Ver cardápio';
+  const preco=document.getElementById('m-preco').value.trim()||'R$20';
+  const hora=document.getElementById('m-hora').value.trim()||'11h às 13h';
+  const arr=pratos.split(',').map(p=>p.trim()).filter(Boolean);
+  const msgs=[
+    {t:'Cardápio do dia (WhatsApp)',tx:`🌞 Bom dia! Cardápio de hoje — ${marca}\n\n${arr.map(p=>`🍱 ${p}`).join('\n')}\n\n💰 ${preco} cada\n🕐 Entrega das ${hora}\n📍 Senador Canedo\n\n📲 Peça: ${wpp} · Aceito Pix ✅`},
+    {t:'Post Instagram / Facebook',tx:`Hoje tem marmita quentinha! 🍽️🔥\n\n${arr.map(p=>`✅ ${p}`).join('\n')}\n\n💰 ${preco} | 🕐 ${hora}\n📍 Senador Canedo\n📲 ${wpp}\n\n.\n#marmita #marmitasenadorcanedo #senadorcanedo #marmitago`},
+    {t:'Mensagem para grupo de bairro',tx:`Oi pessoal! 👋 Sou o(a) ${marca}, entregando marmitas em Senador Canedo!\n🍱 ${arr.join(' · ')}\n💰 ${preco} | 🕐 ${hora}\nPedidos: ${wpp} · Pix ✅`},
+    {t:'Confirmação ao cliente',tx:`✅ Pedido confirmado!\n\nOlá! Seu pedido foi registrado.\n🍱 Prato: [prato]\n📦 Qtd: [qtd]\n💰 Total: [valor]\n🕐 Previsão: ${hora}\n\nPix: ${wpp} · Obrigado(a)! 🙏`},
+  ];
+  document.getElementById('mensagens-geradas').innerHTML=msgs.map((m,i)=>`
+    <div class="card">
+      <div style="font-size:10px;font-weight:600;color:var(--text2);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px">${m.t}</div>
+      <div class="msg-box" id="msg-${i}">${m.tx}<button class="copy-btn" onclick="copiar(${i})"><i class="ti ti-copy"></i> copiar</button></div>
+    </div>`).join('');
+}
+
+function copiar(i){
+  navigator.clipboard.writeText(document.getElementById('msg-'+i).childNodes[0].textContent.trim())
+    .then(()=>toast('Copiado!'))
+    .catch(()=>toast('Copie manualmente'));
+}
+
+// ═══════════════════════════════════════════════
+//  EXPORTAR CSV
+// ═══════════════════════════════════════════════
+function exportarCSV(tipo){
+  let content='',nome='';
+  if(tipo==='pedidos'){
+    if(!pedidos.length){toast('Sem pedidos');return;}
+    const h='Data,Hora,Nome,Prato,Qtd,Total,Comissão,Entregador,Nome entregador,Status\n';
+    const r=pedidos.map(p=>[p.data,p.hora||'',`"${p.nome}"`,`"${p.prato}"`,p.qtd,p.total.toFixed(2),(p.total*(config.pct/100)).toFixed(2),p.tipoEntregador,`"${p.nomeEntregador||''}"`,p.status].join(',')).join('\n');
+    content='\uFEFF'+h+r;nome='pedidos_marmitas.csv';
+  } else if(tipo==='investimentos'){
+    if(!investimentos.length){toast('Sem investimentos');return;}
+    content='\uFEFFData,Descrição,Categoria,Plataforma,Valor\n'+investimentos.map(i=>[i.data,`"${i.descricao}"`,i.categoria,`"${i.plataforma||''}"`,i.valor.toFixed(2)].join(',')).join('\n');
+    nome='investimentos_marmitas.csv';
+  } else {
+    if(!entregadores.length){toast('Sem entregadores');return;}
+    content='\uFEFFNome,WhatsApp,Taxa,Área\n'+entregadores.map(e=>[`"${e.nome}"`,e.tel,parseFloat(e.taxa||0).toFixed(2),`"${e.area||''}"`].join(',')).join('\n');
+    nome='entregadores_marmitas.csv';
+  }
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:'text/csv;charset=utf-8'}));a.download=nome;a.click();toast('CSV exportado!');
+}
+
+// ═══════════════════════════════════════════════
+//  INICIALIZAÇÃO
+// ═══════════════════════════════════════════════
+(function init(){
+  const session=getSession();
+  if(session){
+    const users=getUsers();
+    if(users[session]){iniciarApp(session);return;}
+    clearSession();
+  }
+  // Verificar se há usuário padrão na primeira vez
+  const users=getUsers();
+  if(!Object.keys(users).length){
+    // Sem usuários: mostrar login normalmente
+  }
+})();
+</script>
+</body>
+</html>
